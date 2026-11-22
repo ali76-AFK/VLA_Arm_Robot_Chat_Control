@@ -5,8 +5,8 @@ You talk to it in a web GUI; a small vision-language model looks at the camera i
 do; a motion layer (IK + trajectories) executes it in Gazebo. Everything runs in Docker.
 
 ```
- browser :8080  ──chat/state──►  ┌──────────── sim container ────────────┐        ┌── vlm container ──┐
- (camera, status, joints,        │ web GUI + agent ──► planner ──────────┼──HTTP─►│ llama.cpp server  │
+ browser :8080  ──chat/state──►  ┌──────────── sim container ─────────────┐        ┌── vlm container ──┐
+ (camera, status, joints,        │ web GUI + agent ──► planner ───────────┼──HTTP─►│ llama.cpp server  │
   objects, chat, log)            │      │  IK / trajectories              │        │ SmolVLM-500M (CPU)│
                                  │      ▼                                 │        └───────────────────┘
  Gazebo window (X11, Arc GPU) ◄──│ Gazebo Harmonic: UR5, table, basket,   │
