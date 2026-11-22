@@ -1,0 +1,35 @@
+name: ur5-vla
+services:
+  sim:
+    build:
+      context: .
+      dockerfile: docker/sim.Dockerfile
+    image: ur5-vla-sim:local
+    environment:
+      DISPLAY: ${DISPLAY:-:0}
+      QT_X11_NO_MITSHM: "1"
+      SIM_BACKEND: ${SIM_BACKEND:-gazebo}      # gazebo | mock
+      PLANNER: ${PLANNER:-vlm}                 # vlm | rules
+      VLM_URL: http://vlm:8081
+      GZ_GUI: ${GZ_GUI:-1}                     # 1 = also open the Gazebo window
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    devices:
+      - /dev/dri:/dev/dri                      # Intel Arc GPU (Mesa/OpenGL)
+    ports:
+      - "8080:8080"
+    shm_size: 512m
+    mem_limit: 5g
+
+  vlm:                                         # small vision-language model, CPU (llama.cpp)
+    profiles: ["vlm"]
+    image: ghcr.io/ggml-org/llama.cpp:server
+    command: >
+      -hf ${VLM_REPO:-ggml-org/SmolVLM-500M-Instruct-GGUF}
+      --host 0.0.0.0 --port 8081 -c 4096 -t ${VLM_THREADS:-6} --no-webui
+    volumes:
+      - vlm-cache:/root/.cache                 # model is downloaded once (~0.6 GB)
+    mem_limit: 2g
+
+volumes:
+  vlm-cache:

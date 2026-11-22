@@ -1,0 +1,5 @@
+# Optional override: force Mesa software rendering if the GPU path gives a black/crashing Gazebo window.
+services:
+  sim:
+    environment:
+      LIBGL_ALWAYS_SOFTWARE: "1"
